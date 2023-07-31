@@ -8,5 +8,6 @@
         <page name='lc3'/>
         <page name='test'/>
         <page name='DailyChallenges_2307'/>
+        <page name='CodeSignal'/>
     </pages>
 </playground>

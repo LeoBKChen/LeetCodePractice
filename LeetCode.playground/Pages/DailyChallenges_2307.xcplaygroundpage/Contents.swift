@@ -1,6 +1,95 @@
 //: [Previous](@previous)
 
 import Foundation
+
+func minSpeedOnTime(_ dist: [Int], _ hour: Double) -> Int {
+    
+    if ( hour <= Double(dist.count - 1) ) {
+        return -1
+    }
+
+    var res: Int = 1
+    var cost: Double = 0.0
+    var right: Int = Int(1e7)
+    var left: Int = 1
+    
+    while (left <= right) {
+        let mid = (right + left) / 2
+        print("mid= \(mid), cost=\(cost)")
+        cost = dist.dropLast().reduce(0, { $0 + (ceil(Double($1)/Double(mid))) })
+        cost += Double(dist.last!) / Double(mid)
+
+        if (cost > hour) {
+            left = mid + 1
+        }
+        else {
+            right = mid - 1
+            res = mid
+        }
+    }
+    
+    return res
+}
+
+let dist = [1,1]
+
+let hour = 1.0
+
+print(minSpeedOnTime(dist, hour))
+
+func peakIndexInMountainArray(_ arr: [Int]) -> Int {
+    var left = 0
+    var right = arr.count - 1
+    
+    while (left <= right) {
+        let mid = (right + left) / 2
+        
+        if (arr[mid] < arr[mid+1]) {
+            left = mid + 1
+        }
+        else if (arr[mid] < arr[mid-1]){
+            right = mid - 1
+        }
+        else {
+            return mid
+        }
+    }
+    
+    return 0
+}
+
+let arr = [0,2,10,30,5,2]
+print(peakIndexInMountainArray(arr))
+
+func myPow(_ x: Double, _ n: Int) -> Double {
+    var res: Double = 1.0
+    
+    if (x == 0.0) {
+        return 0.0
+    }
+    
+    if (n == 0) {
+        return 1.0
+    }
+    else if (n > 0) {
+        for _ in 0..<n {
+            res *= x
+        }
+    }
+    else if (n < 0){
+        for _ in 0..<abs(n) {
+            res /= x
+        }
+    }
+    
+    return res
+}
+
+let x = 23.0
+let n = 0
+print(myPow(x, n))
+
+
 public class ListNode {
     public var val: Int
     public var next: ListNode?
