@@ -2,6 +2,27 @@
 
 import Foundation
 
+func maximumBeauty(_ nums: [Int], _ k: Int) -> Int {
+    var res: Int = 0
+    var (left, right): (Int, Int) = (0, 0)
+    let sortedNums = nums.sorted{ $0 < $1 }
+    
+    while (right < nums.count) {
+        while(right < nums.count && sortedNums[right] <= (sortedNums[left] + (k * 2))) {
+            right += 1
+        }
+        res = max(res, right - left)
+        left += 1
+    }
+    
+    return res
+}
+
+let nums = [13,46,71]
+let k = 29
+
+print(maximumBeauty(nums, k))
+
 func minSpeedOnTime(_ dist: [Int], _ hour: Double) -> Int {
     
     if ( hour <= Double(dist.count - 1) ) {
