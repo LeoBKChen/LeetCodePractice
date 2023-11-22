@@ -2,6 +2,26 @@
 
 import Foundation
 
+func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+    var map: Dictionary<Int, Int> = [:]
+    
+    for i in 0..<nums.count {
+        if ( map[target - nums[i]] == nil ) {
+            map[nums[i]] = i
+        }
+        else {
+            return [map[target - nums[i]]!, i]
+        }
+    }
+    
+    return [0,0]
+}
+
+let nums = [3,2,4]
+let target = 6
+
+print(twoSum(nums, target))
+
 class Solution {
     
     // Hashmap

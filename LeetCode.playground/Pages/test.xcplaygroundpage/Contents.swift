@@ -1,5 +1,68 @@
 import Foundation
 import Dispatch
+import Combine
+
+// 创建一个 PassthroughSubject 用于模拟发布者，发布的元素类型是 Optional<String>
+//let myPublisher = PassthroughSubject<String, Never>()
+
+let timer = Timer.publish(every: 3.0, on: .main, in: .common)
+    .autoconnect()
+    .map { _ in "timer send string" }
+
+let filterTimer = Timer.publish(every: 1.3, on: .main, in: .common)
+    .autoconnect()
+    .map { _ in Bool.random() }
+//let combinedPublisher = Publishers.Merge(myPublisher, timer)
+
+// 订阅 combinedPublisher 来接收过滤后的值
+let cancellable = timer.combineLatest(filterTimer)
+    .print("combineLatest")
+    .sink { string, filter in
+        if (filter) {
+            print("Received string: \(string)")
+        }
+        else {
+            print("rejected with: \(filter), string:\(string)")
+        }
+    }
+
+// 模拟发布一些值
+//myPublisher.send("Value 1")
+//myPublisher.send("Value 2")
+//
+//// 等待一段时间，这段时间内不会接收到值
+//RunLoop.main.run(until: Date(timeIntervalSinceNow: 4.0))
+//
+//// 三秒后，可以接收到 nil 值
+//myPublisher.send(nil)
+//
+//// 等待一段时间，这段时间内不会接收到值
+//RunLoop.main.run(until: Date(timeIntervalSinceNow: 4.0))
+//myPublisher.send("Value 2")
+//// 取消订阅
+//cancellable.cancel()
+
+
+// 創建一個測試用的 Combine publisher，這個 publisher 會在三秒後發出一個非 nil 值
+let testPublisher = Timer.publish(every: 1.2, on: .main, in: .default)
+    .autoconnect()
+    .map { _ in Int.random(in: 0..<2) == 0 ? nil : Int.random(in: 1..<100) }
+    .eraseToAnyPublisher()
+
+// 監聽並處理 Combine publisher
+let cancellable = testPublisher
+//    .debounce(for: 3.0, scheduler: RunLoop.main)
+    .filter { $0 != nil }
+    .sink { value in
+        if let nonNilValue = value {
+            print("Received non-nil value: \(nonNilValue)")
+        } else {
+            print("Received nil value within the debounce window.")
+        }
+    }
+
+// 取消監聽
+// cancellable.cancel()
 
 let delayQueue = DispatchQueue(label: "delayQueue")
 print("Before: \(Date())")

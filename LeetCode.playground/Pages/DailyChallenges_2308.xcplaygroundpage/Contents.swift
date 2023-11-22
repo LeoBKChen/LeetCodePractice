@@ -2,6 +2,102 @@
 
 import Foundation
 
+func fullJustify(_ words: [String], _ maxWidth: Int) -> [String] {
+    var res: [String] = []
+    var currentLine: [String] = []
+    var n = words.count
+    var i = 0
+    
+    while (i < n) {
+        var currentLength = 0
+        currentLine = []
+        currentLine.append(words[i])
+        currentLength = words[i].count
+        
+        // add words into line
+        while ((i + 1) < n && (currentLength + 1 + words[i+1].count <= maxWidth)) {
+            currentLine.append(" ")
+            currentLine.append(words[i+1])
+            currentLength += 1 + words[i+1].count
+            i += 1
+        }
+        // fill with spaces
+        if (currentLength < maxWidth) {
+            if (currentLine.count > 1 && i != (n - 1)) {
+                while (currentLength < maxWidth) {
+                    for j in 0..<(currentLine.count / 2) {
+                        currentLine[2 * j + 1].append(" ")
+                        currentLength += 1
+                        if (currentLength >= maxWidth){
+                            break
+                        }
+                    }
+                }
+            }
+            else {
+                currentLine.append(String(repeating: " ", count: maxWidth-currentLength))
+            }
+        }
+        print("currentLine = \(currentLine)")
+        res.append(currentLine.reduce("", {$0 + $1}))
+        print("res =")
+        res.forEach {
+            print($0)
+        }
+        i += 1
+    }
+    
+    return res
+}
+
+let words = ["Science","is","what","we","understand","well","enough","to","explain","to","a","computer.","Art","is","everything","else","we","do"]
+let maxWidth = 20
+
+print(fullJustify(words, maxWidth))
+
+func reorganizeString(_ s: String) -> String {
+    var letterCount: [Character: Int] = s.reduce(into: [:]) {
+        $0[$1, default: 0] += 1
+    }
+    
+    var result = ""
+    var last: Character?
+    for _ in 0..<s.count {
+        guard let pair = letterCount
+            .lazy
+            .filter({ $0.value > 0 && $0.key != last })
+            .max(by: { $0.value < $1.value }) else {
+            return ""
+        }
+        let letter = pair.key
+        result.append(letter)
+        last = letter
+        letterCount[letter, default: 0] -= 1
+    }
+    return result
+}
+
+let s = "aab"
+print(reorganizeString(s))
+
+let letterMap = ["Z", "A", "B", "C", "D", "E", "F", "G", "H"
+    , "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R"
+    , "S", "T", "U", "V", "W", "X", "Y"]
+
+func convertToTitle(_ columnNumber: Int) -> String {
+    var res: String = ""
+    print("columnNumber = \(columnNumber)")
+    
+    if (columnNumber > 26) {
+        res += convertToTitle((columnNumber - 1) / 26)
+    }
+    res += letterMap[columnNumber % 26]
+    return res
+}
+
+let columnNumber = 52
+print(convertToTitle(columnNumber))
+
 func repeatedSubstringPattern(_ s: String) -> Bool {
     let t = s + s
     let processT = t[t.index(after: t.startIndex)..<t.index(before: t.endIndex)]
